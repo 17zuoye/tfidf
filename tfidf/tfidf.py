@@ -5,12 +5,16 @@ from etl_utils import process_notifier, cpickle_cache, cached_property
 from collections import defaultdict
 
 class TfIdf():
-    def __init__(self, documents, cache_dir):
+    def __init__(self, documents_or_func, cache_dir):
         """
         1. input is [ [item_id, {feature1:count1, feature2: count2, ...}, ... ]
         2. onput is [ [item_id, {feature1:rate1,  feature2: rate2,  ...}, ... ]
         """
-        self.documents = documents
+        self.documents = documents_or_func
+        if '__call__' in dir(self.documents):
+            self.documents = self.documents()
+        assert len(self.documents), u"Documents should not be none."
+
         self.cache_dir = cache_dir
 
         def load_idf():
