@@ -7,8 +7,8 @@ from collections import defaultdict
 class TfIdf():
     def __init__(self, documents_or_func, cache_dir):
         """
-        1. input is [ [item_id, {feature1:count1, feature2: count2, ...}, ... ]
-        2. onput is [ [item_id, {feature1:rate1,  feature2: rate2,  ...}, ... ]
+        1. input is [ [item_id, {feature1:count1, feature2: count2, ...}], ... ]
+        2. onput is [ [item_id, {feature1:rate1,  feature2: rate2,  ...}], ... ]
         """
         self.documents = documents_or_func
         if '__call__' in dir(self.documents):
@@ -17,14 +17,6 @@ class TfIdf():
 
         self.cache_dir = cache_dir
 
-        def load_idf():
-            idf_cache = IdfResult()
-            for item1 in process_notifier(self.documents):
-                id1, doc1 = item1
-                for w1 in doc1:
-                    idf_cache[w1] = idf_cache.get(w1, False) or self.idf(w1)
-            return idf_cache
-        self.idf_cache = cpickle_cache(self.cache_dir + '/idf.cPickle', load_idf)
         self.idf_default_val = sum(self.idf_cache.values()) / float(len(self.idf_cache))
         self.idf_cache = defaultdict(lambda : self.idf_default_val, self.idf_cache)
 
@@ -37,12 +29,24 @@ class TfIdf():
     def tf(self, word1, doc1, uniq_features_count1):
         return float(doc1[word1]) / uniq_features_count1
 
-    def idf(self, word1):
-        all_num = float(len(self.doc_list))
-        word_count = 0
-        for doc1 in self.doc_list:
-            if word1 in doc1: word_count += 1
-        return math.log(all_num/word_count)
+    @cached_property
+    def idf_cache(self):
+        def func():
+            feature_in_doc_to_count = defaultdict(int)
+            for features in self.doc_list:
+                for feature1 in features:
+                    feature_in_doc_to_count[feature1] += 1
+
+            idf_result = IdfResult()
+            all_num = float(len(self.doc_list))
+
+            for feature1, count1 in feature_in_doc_to_count.iteritems():
+                idf_result[feature1] = math.log( all_num / count1 )
+
+            return idf_result
+
+        return cpickle_cache(self.cache_dir + '/idf.cPickle', func)
+
 
     def tfidf(self, word1, doc1, uniq_features_count1):
         idf_value = self.idf_cache[word1]
