@@ -10,17 +10,20 @@ class TfIdf():
         1. input is [ [item_id, {feature1:count1, feature2: count2, ...}], ... ]
         2. onput is [ [item_id, {feature1:rate1,  feature2: rate2,  ...}], ... ]
         """
-        self.documents = documents_or_func
-        if '__call__' in dir(self.documents):
-            self.documents = self.documents()
-        assert len(self.documents), u"Documents should not be none."
-
+        self.documents_or_func = documents_or_func
         self.cache_dir = cache_dir
 
         self.idf_default_val = sum(self.idf_cache.values()) / float(len(self.idf_cache))
+        # Always load idf cache, and it's really small.
         self.idf_cache = defaultdict(lambda : self.idf_default_val, self.idf_cache)
 
-        self.process()
+    @cached_property
+    def documents(self):
+        documents = self.documents_or_func
+        if '__call__' in dir(documents):
+            documents = documents()
+        assert len(documents), u"Documents should not be none."
+        return documents
 
     @cached_property
     def doc_list(self):
@@ -57,14 +60,14 @@ class TfIdf():
         uniq_features_count = sum([doc1[key] for key in doc1])
         return {w1: self.tfidf(w1, doc1, uniq_features_count) for w1 in doc1}
 
-    def process(self):
+    def generate_tfidf_cache(self):
         def func():
             result = TfIdfResult()
             for item1 in process_notifier(self.documents):
                 id1, doc1 = item1
                 result[id1] = self.tfidf_in_a_doc(doc1)
             return result
-        self.result = cpickle_cache(self.cache_dir + '/tfidf.cPickle', func)
+        return cpickle_cache(self.cache_dir + '/tfidf.cPickle', func)
 
 class IdfResult(dict):
     def inspect(self):

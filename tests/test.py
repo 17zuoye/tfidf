@@ -23,9 +23,10 @@ class TestTfIdf(unittest.TestCase):
         self.assertTrue(t.idf_cache['I'] < t.idf_cache['hello'])
         self.assertTrue(t.idf_cache['I'] < t.idf_cache['Your'])
 
-        self.assertTrue(t.result[1]['I'] < t.result[1]['You'])
-        self.assertTrue(t.result[1]['You'] < t.result[1]['hello'])
-        self.assertTrue(t.result[1]['hello'] == t.result[1]['world'])
+        tfidf_cache = t.generate_tfidf_cache()
+        self.assertTrue(tfidf_cache[1]['I'] < tfidf_cache[1]['You'])
+        self.assertTrue(tfidf_cache[1]['You'] < tfidf_cache[1]['hello'])
+        self.assertTrue(tfidf_cache[1]['hello'] == tfidf_cache[1]['world'])
 
 
 
