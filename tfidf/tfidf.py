@@ -15,7 +15,7 @@ class TfIdf():
 
         self.idf_default_val = sum(self.idf_cache.values()) / float(len(self.idf_cache))
         # Always load idf cache, and it's really small.
-        self.idf_cache = defaultdict(lambda : self.idf_default_val, self.idf_cache)
+        self.idf_cache = IdfResult(lambda : self.idf_default_val, self.idf_cache)
 
     @cached_property
     def documents(self):
@@ -57,6 +57,7 @@ class TfIdf():
         return score
 
     def tfidf_in_a_doc(self, doc1):
+        doc1 = dict(doc1)
         uniq_features_count = sum([doc1[key] for key in doc1])
         return {w1: self.tfidf(w1, doc1, uniq_features_count) for w1 in doc1}
 
@@ -69,7 +70,7 @@ class TfIdf():
             return result
         return cpickle_cache(self.cache_dir + '/tfidf.cPickle', func)
 
-class IdfResult(dict):
+class IdfResult(defaultdict):
     def inspect(self):
         for word1, freq1 in sorted(self.iteritems(), key=lambda i1: -i1[1]):
             print word1, freq1
