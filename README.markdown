@@ -6,8 +6,8 @@ Usage
 ------------------------------------
 ```python
 tfidf1 = TfIdf(documents, QuestionWithFitDegree.cache_dir)
-tfidf1.process()
-tfidf1.result
+tfidf1.idf_cache # access global Idf
+tfidf_cache = tfidf1.generate_tfidf_cache()
 ```
 
 
