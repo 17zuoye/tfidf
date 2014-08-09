@@ -21,7 +21,8 @@ class TestTfIdf(unittest.TestCase):
     def test_tfidf(self):
         t = TfIdf(self.data, root_dir)
         self.assertTrue(t.idf_cache['I'] < t.idf_cache['hello'])
-        self.assertTrue(t.idf_cache['I'] < t.idf_cache['Your'])
+        self.assertTrue(t.idf_cache['I'] < t.idf_cache['You'])
+        self.assertTrue(t.idf_cache['I'] < t.idf_cache['not exist feature'], "test default idf_default_val")
 
         tfidf_cache = t.generate_tfidf_cache()
         self.assertTrue(tfidf_cache[1]['I'] < tfidf_cache[1]['You'])
