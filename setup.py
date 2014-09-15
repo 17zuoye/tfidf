@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='tfidf',
-    version='0.0.5',
+    version='0.0.6',
     url='http://github.com/17zuoye/tfidf/',
     license='MIT',
     author='David Chen',
