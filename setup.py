@@ -14,7 +14,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'etl_utils',
+        'etl_utils >= 0.0.9',
     ],
     classifiers=[
         'Intended Audience :: Developers',

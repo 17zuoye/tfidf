@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
-from etl_utils import process_notifier, cpickle_cache, cached_property
+from etl_utils import process_notifier, cpickle_cache, cached_property, DictUtils
 from collections import defaultdict, Counter
 
 class TfIdf():
@@ -14,9 +14,9 @@ class TfIdf():
         self.documents_or_func = documents_or_func
         self.cache_dir = cache_dir
 
-        self.idf_default_val = sum(self.idf_cache.values()) / float(len(self.idf_cache))
         # Always load idf cache, and it's really small.
-        self.idf_cache = IdfResult(lambda : self.idf_default_val, self.idf_cache)
+        d1 = DictUtils.add_default_value(self.idf_cache)
+        self.idf_cache = IdfResult(d1.default_factory, d1)
 
     @cached_property
     def documents(self):
