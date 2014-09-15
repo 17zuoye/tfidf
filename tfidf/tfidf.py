@@ -33,7 +33,7 @@ class TfIdf():
     def idf_cache(self):
         def func():
             feature_in_doc_to_count = defaultdict(int)
-            for item_id1, features in self.documents.iteritems():
+            for item_id1, features in process_notifier(self.documents):
                 for feature1 in features.iterkeys():
                     feature_in_doc_to_count[feature1] += 1
 
