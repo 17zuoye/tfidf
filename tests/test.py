@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os
+import sys
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, root_dir)
-os.system("rm -f *.cPickle")
 
 import unittest
 from tfidf import TfIdf
+
+
+def clean_tmp():
+    os.system("rm -f %s/*.cPickle" % root_dir)
+
 
 class TestTfIdf(unittest.TestCase):
 
@@ -19,6 +24,8 @@ class TestTfIdf(unittest.TestCase):
         }
 
     def test_tfidf(self):
+        clean_tmp()
+
         t = TfIdf(self.data, root_dir)
         self.assertTrue(t.idf_cache['I'] < t.idf_cache['hello'])
         self.assertTrue(t.idf_cache['I'] < t.idf_cache['You'])
@@ -29,5 +36,8 @@ class TestTfIdf(unittest.TestCase):
         self.assertTrue(result1['You'] < result1['hello'])
         self.assertTrue(result1['hello'] == result1['world'])
 
+        clean_tmp()
 
-if __name__ == '__main__': unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()

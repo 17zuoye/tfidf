@@ -4,6 +4,7 @@ import math
 from etl_utils import process_notifier, cpickle_cache, cached_property, DictUtils
 from collections import defaultdict, Counter
 
+
 class TfIdf():
     def __init__(self, documents_or_func, cache_dir):
         """
@@ -41,7 +42,7 @@ class TfIdf():
             all_num = float(len(self.documents))
 
             for feature1, count1 in feature_in_doc_to_count.iteritems():
-                idf_result[feature1] = math.log( all_num / count1 )
+                idf_result[feature1] = math.log(all_num / count1)
 
             return idf_result
 
@@ -66,11 +67,12 @@ class IdfResult(defaultdict):
         for word1, freq1 in sorted(self.iteritems(), key=lambda i1: -i1[1]):
             print word1, freq1
 
+
 class TfIdfResult(dict):
     def inspect(self, doc_func=None):
         for item_id1, freq1 in self.iteritems():
             print
-            print "="*80
+            print "=" * 80
             if doc_func:
                 print doc_func(item_id1)
             else:
